@@ -1,4 +1,3 @@
-import numpy as np 
 import pandas as pd
 import argparse 
 
@@ -42,7 +41,7 @@ work in progress
 '''
 
 #creates master dataframe
-cleaned = clean(list(dotenv_values(".env.test").values()))
+cleaned = clean(list(dotenv_values(".env").values()))
 
 def main(test = False): 
     list_paths = list((dotenv_values(".env.test") if test else dotenv_values(".env")).values())

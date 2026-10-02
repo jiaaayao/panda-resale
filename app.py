@@ -1,45 +1,36 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
+import datetime as dt
+import plotly.express as px
 from clean import cleaned
-from analysis import group_by_flat_type, group_by_town, group_by_year
+from analysis import filter_by_towns, filter_by_flat_type, filter_by_date
 
-town_name = st.sidebar.selectbox(
+town_name = st.sidebar.multiselect(
     label="Towns",
     options=cleaned.town.cat.categories.values,
-    index=None,
+    select_all=True,
+    default=cleaned.town.cat.categories.values,
     key="town_select",
 )
 
-flat_type = st.sidebar.selectbox(
+flat_type = st.sidebar.multiselect(
     label="Flat Type",
     options=cleaned.flat_type.cat.categories.values,
-    index=None,
+    select_all=True,
+    default=cleaned.flat_type.cat.categories.values,
     key="flat_type_select",
 )
 
-cleaned = group_by_town(group_by_flat_type(cleaned, flat_type), town_name)
+st.title('Panda Resale')
+st.header(body='A Look at HDB Resale Data from 2012 to 2017', divider="gray")
 
-st.title('Panda Resale - A look at HDB resale data from 2012 to today')
-st.scatter_chart(
-    data=cleaned,
-    x="month",
-    y="resale_price",
-    x_label="Date",
-    y_label="Resale Price",
-    color="#ff6666",
+st.plotly_chart(
+    figure_or_data=px.scatter(
+        data_frame=filter_by_flat_type(filter_by_towns(cleaned, town_name), flat_type),
+        x="month",
+        y="resale_price",
+        color="town",
+        hover_data=["flat_type", "flat_model"]
+    ),
+    height="stretch",
+    key="chart1",
 )
-
-add_slider = st.sidebar.slider(
-    "Select a range of values",
-    0.0, 100.0, (25.0, 75.0)
-)
-left_col, right_col = st.columns(2)
-left_col.button("Press me!")
-
-with right_col:
-    chosen = st.radio(
-        "Sorting hat",
-        ("Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin")
-    )
-    st.write(f"You are in {chosen} house")
