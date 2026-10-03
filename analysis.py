@@ -1,4 +1,4 @@
-import pandas as pd
+import datetime as dt
 import argparse
 from clean import cleaned, clean
 
@@ -22,8 +22,9 @@ def filter_by_flat_type(df, flat_type_list: list):
 def group_by_year(df, year: int):
     return df[df.month.dt.year == year]
 
+#compares month column of df against a tuple of two datetime.date objects which functions as a range
 def filter_by_date(df, date_range: tuple):
-    return df[df.month.dt >= date_range[0] and df.month.dt <= date_range[1]]
+    return df[(df["month"].dt.date >= date_range[0]) & (df["month"].dt.date <= date_range[1])]
 
 def main(test = False):
     if test:
